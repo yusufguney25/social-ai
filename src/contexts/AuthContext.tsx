@@ -13,6 +13,7 @@ interface AuthContextType {
   signUp: (email: string, password: string, fullName: string, role: 'individual' | 'agency') => Promise<void>;
   signIn: (email: string, password: string) => Promise<void>;
   signOut: () => Promise<void>;
+  logout: () => Promise<void>;
   updateProfile: (updates: Partial<Profile>) => Promise<void>;
 }
 
@@ -140,6 +141,8 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
     }
   };
 
+  const logout = signOut; // Alias for signOut
+
   const updateProfile = async (updates: Partial<Profile>) => {
     if (!user) throw new Error('No user logged in');
 
@@ -167,6 +170,7 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
       signUp,
       signIn,
       signOut,
+      logout,
       updateProfile,
     }}>
       {children}

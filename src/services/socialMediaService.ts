@@ -33,6 +33,10 @@ export class SocialMediaService {
       const userResponse = await fetch(`https://graph.instagram.com/me?fields=id,username,account_type,media_count&access_token=${tokenData.access_token}`);
       const userData = await userResponse.json();
 
+      if (!userResponse.ok) {
+        throw new Error(userData.error?.message || 'Failed to get Instagram user data');
+      }
+
       // Save to database
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error('User not authenticated');
@@ -68,9 +72,9 @@ export class SocialMediaService {
       const userResponse = await fetch(`https://graph.facebook.com/me?fields=id,name,email&access_token=${accessToken}`);
       const userData = await userResponse.json();
 
-      // Get page info (for business accounts)
-      const pagesResponse = await fetch(`https://graph.facebook.com/me/accounts?access_token=${accessToken}`);
-      const pagesData = await pagesResponse.json();
+      if (!userResponse.ok) {
+        throw new Error(userData.error?.message || 'Failed to get Facebook user data');
+      }
 
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error('User not authenticated');
@@ -132,6 +136,10 @@ export class SocialMediaService {
       });
       const userData = await userResponse.json();
 
+      if (!userResponse.ok) {
+        throw new Error(userData.error?.message || 'Failed to get Twitter user data');
+      }
+
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error('User not authenticated');
 
@@ -192,15 +200,23 @@ export class SocialMediaService {
       });
       const userData = await userResponse.json();
 
+      if (!userResponse.ok) {
+        throw new Error(userData.message || 'Failed to get LinkedIn user data');
+      }
+
       const { data: user } = await supabase.auth.getUser();
       if (!user.user) throw new Error('User not authenticated');
+
+      const firstName = userData.firstName?.localized?.en_US || '';
+      const lastName = userData.lastName?.localized?.en_US || '';
+      const fullName = `${firstName} ${lastName}`.trim();
 
       const socialAccountData: SocialAccountInsert = {
         user_id: user.user.id,
         platform: 'linkedin',
         platform_user_id: userData.id,
-        username: `${userData.firstName.localized.en_US} ${userData.lastName.localized.en_US}`,
-        display_name: `${userData.firstName.localized.en_US} ${userData.lastName.localized.en_US}`,
+        username: fullName,
+        display_name: fullName,
         access_token: tokenData.access_token,
         followers_count: 0, // LinkedIn doesn't provide follower count in basic API
       };

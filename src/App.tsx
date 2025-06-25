@@ -7,6 +7,7 @@ import { Footer } from './components/layout/Footer';
 import { LandingPage } from './pages/LandingPage';
 import { LoginPage } from './pages/auth/LoginPage';
 import { RegisterPage } from './pages/auth/RegisterPage';
+import { InstagramCallback, FacebookCallback, TwitterCallback, LinkedInCallback } from './pages/auth/SocialCallbacks';
 import { DashboardLayout } from './pages/dashboard/DashboardLayout';
 import { DashboardOverview } from './pages/dashboard/DashboardOverview';
 import { ConnectedAccounts } from './pages/dashboard/ConnectedAccounts';
@@ -80,6 +81,12 @@ const AppContent: React.FC = () => {
               </PublicRoute>
             }
           />
+
+          {/* OAuth Callback Routes */}
+          <Route path="/auth/instagram/callback" element={<InstagramCallback />} />
+          <Route path="/auth/facebook/callback" element={<FacebookCallback />} />
+          <Route path="/auth/twitter/callback" element={<TwitterCallback />} />
+          <Route path="/auth/linkedin/callback" element={<LinkedInCallback />} />
 
           {/* Protected dashboard routes */}
           <Route
